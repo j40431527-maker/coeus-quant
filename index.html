@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COEUS QUANT — H1 Precious Metals Signal Stream</title>
+<meta name="description" content="COEUS QUANT: daily gold & silver H1 LONG signals. 92.9% win rate out-of-sample, 3 years walk-forward, fees included. $20/month.">
+<style>
+  :root {
+    --sky: #0ea5e9;
+    --sky-dim: #0c8fd4;
+    --bg0: #0a0f1a;
+    --bg1: #0d1524;
+    --bg2: #111c30;
+    --line: rgba(14, 165, 233, 0.18);
+    --text: #dbeafe;
+    --text-dim: #7d95b8;
+    --green: #34d399;
+    --red: #f87171;
+    --amber: #fbbf24;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: radial-gradient(1200px 600px at 70% -10%, rgba(14,165,233,0.14), transparent 60%),
+                radial-gradient(800px 500px at 10% 110%, rgba(14,165,233,0.08), transparent 55%),
+                var(--bg0);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .glass {
+    background: linear-gradient(180deg, rgba(17,28,48,0.85), rgba(13,21,36,0.9));
+    border: 1px solid var(--line);
+    backdrop-filter: blur(14px);
+    border-radius: 16px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── topbar ── */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    border-bottom: 1px solid var(--line);
+    background: rgba(10,15,26,0.72);
+    backdrop-filter: blur(16px);
+  }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.2rem; letter-spacing: 0.5px; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--sky); box-shadow: 0 0 12px var(--sky); }
+  .brand small { color: var(--text-dim); font-weight: 400; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; }
+  .topbar .cta { display: flex; gap: 10px; align-items: center; }
+
+  /* ── buttons / pills ── */
+  .btn {
+    display: inline-block; padding: 10px 22px; border-radius: 9999px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    border: 1px solid transparent; cursor: pointer;
+  }
+  .btn-primary { background: var(--sky); color: #062033; box-shadow: 0 4px 20px rgba(14,165,233,0.35); }
+  .btn-primary:hover { background: #38bdf8; transform: translateY(-1px); box-shadow: 0 6px 26px rgba(14,165,233,0.45); }
+  .btn-ghost { border-color: var(--line); color: var(--text); background: transparent; }
+  .btn-ghost:hover { border-color: var(--sky); color: var(--sky); }
+  .btn-lg { padding: 14px 34px; font-size: 1.05rem; }
+
+  /* ── hero ── */
+  .hero { padding: 90px 0 70px; text-align: center; }
+  .hero .pill {
+    display: inline-block; padding: 6px 16px; border-radius: 9999px;
+    background: rgba(14,165,233,0.12); border: 1px solid var(--line);
+    color: var(--sky); font-size: 0.8rem; letter-spacing: 0.5px; margin-bottom: 22px;
+  }
+  .hero h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.5px; }
+  .hero h1 .hl { color: var(--sky); }
+  .hero .sub { color: var(--text-dim); font-size: 1.15rem; max-width: 640px; margin: 22px auto 34px; }
+  .hero .stats { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+  .stat {
+    padding: 18px 26px; text-align: center; min-width: 150px;
+    border-radius: 14px; background: var(--bg2); border: 1px solid var(--line);
+  }
+  .stat .num { font-size: 1.9rem; font-weight: 800; color: var(--sky); }
+  .stat .lbl { font-size: 0.78rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; }
+  .stat .num.green { color: var(--green); }
+
+  /* ── sections ── */
+  section { padding: 60px 0; }
+  .sec-head { text-align: center; margin-bottom: 44px; }
+  .sec-head h2 { font-size: 2rem; font-weight: 700; }
+  .sec-head p { color: var(--text-dim); max-width: 620px; margin: 12px auto 0; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .card { padding: 26px; }
+  .card .ic { font-size: 1.7rem; margin-bottom: 12px; }
+  .card h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--sky); }
+  .card p { color: var(--text-dim); font-size: 0.92rem; }
+
+  /* ── pricing ── */
+  .price-card { max-width: 460px; margin: 0 auto; padding: 40px 36px; text-align: center; position: relative; }
+  .price-card .flag {
+    position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+    background: var(--sky); color: #062033; font-size: 0.72rem; font-weight: 700;
+    padding: 4px 14px; border-radius: 9999px; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .price-card .amt { font-size: 3.4rem; font-weight: 800; color: var(--text); }
+  .price-card .amt span { font-size: 1.3rem; color: var(--text-dim); font-weight: 400; }
+  .price-card .per { color: var(--text-dim); margin: 4px 0 22px; }
+  .price-list { list-style: none; text-align: left; margin: 0 0 26px; }
+  .price-list li { padding: 9px 0; border-bottom: 1px solid rgba(14,165,233,0.08); color: var(--text-dim); font-size: 0.94rem; }
+  .price-list li::before { content: "✓ "; color: var(--green); font-weight: 700; }
+
+  /* ── honesty / disclaimer ── */
+  .disclaimer { padding: 26px; border-left: 3px solid var(--amber); margin-top: 44px; }
+  .disclaimer h4 { color: var(--amber); margin-bottom: 8px; font-size: 0.95rem; }
+  .disclaimer p { color: var(--text-dim); font-size: 0.84rem; }
+
+  footer { border-top: 1px solid var(--line); padding: 34px 0; margin-top: 40px; text-align: center; color: var(--text-dim); font-size: 0.82rem; }
+
+  @media (max-width: 640px) {
+    .hero { padding: 60px 0 40px; }
+    .stat { min-width: 130px; padding: 14px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap topbar">
+    <div class="brand"><span class="dot"></span> COEUS QUANT <small>signal stream</small></div>
+    <div class="cta">
+      <a href="#pricing" class="btn btn-ghost">Pricing</a>
+      <a href="#subscribe" class="btn btn-primary">Subscribe</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="pill">● LIVE — signal stream generated daily from the validated H1 gate</span>
+    <h1>Trade Gold &amp; Silver<br>with a <span class="hl">92.9%</span> out-of-sample edge</h1>
+    <p class="sub">
+      COEUS QUANT delivers daily H1 LONG signals on XAUUSD (gold) and XAGUSD
+      (silver) — the precious-metals momentum edge, validated over 3 years of
+      monthly walk-forward testing, fees included. One signal per day, on average.
+    </p>
+    <div class="stats">
+      <div class="stat"><div class="num">92.9%</div><div class="lbl">OOS win rate</div></div>
+      <div class="stat"><div class="num">30+/mo</div><div class="lbl">signals</div></div>
+      <div class="stat"><div class="num green">+0.064%</div><div class="lbl">expectancy/trade</div></div>
+      <div class="stat"><div class="num">3 yr</div><div class="lbl">walk-forward</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>What you get</h2>
+      <p>Every signal is a LONG entry on the next H1 bar open, with exact SL and TP levels, generated by the same gate that produced the validated results.</p>
+    </div>
+    <div class="cards">
+      <div class="card glass"><div class="ic">📈</div><h3>Daily signals</h3><p>Gold + silver H1 LONG entries, ~1/day average, with entry price, SL 8%, TP 0.5%.</p></div>
+      <div class="card glass"><div class="ic">🔬</div><h3>Validated, not hyped</h3><p>92.9% WR out-of-sample, monthly walk-forward 2023-2026, fees 0.04%/side included. No lookahead.</p></div>
+      <div class="card glass"><div class="ic">🛡️</div><h3>Risk-first</h3><p>LONG-only (shorts lose on metals), 2% risk sizing, survival monitor: 3 negative weeks → half size, 6 → stop.</p></div>
+      <div class="card glass"><div class="ic">⚡</div><h3>Same-day delivery</h3><p>Signal emitted after each H1 close, delivered via email/Telegram (choose at signup).</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Pricing</h2>
+      <p>Simple monthly subscription. Cancel anytime.</p>
+    </div>
+    <div class="price-card glass">
+      <span class="flag">Most popular</span>
+      <div class="amt">$20<span>/mo</span></div>
+      <div class="per">per month · cancel anytime</div>
+      <ul class="price-list">
+        <li>Daily gold &amp; silver H1 LONG signals</li>
+        <li>Entry / SL / TP for every signal</li>
+        <li>Email + Telegram delivery</li>
+        <li>Monthly performance report (honest, incl. losing months)</li>
+        <li>Access to the live signal archive</li>
+      </ul>
+      <a href="#subscribe" class="btn btn-primary btn-lg">Subscribe now</a>
+    </div>
+
+    <div class="disclaimer glass">
+      <h4>⚠️ Risk disclosure</h4>
+      <p>
+        Trading involves substantial risk of loss. Past performance — including
+        out-of-sample walk-forward results — does not guarantee future results.
+        92.9% WR is the historical OOS figure; expectancy has decayed ~50% in the
+        most recent 18 months and may decay further. Signals are research, not
+        financial advice. Never risk capital you cannot afford to lose. Results
+        will vary; there will be losing months.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="subscribe">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Subscribe</h2>
+      <p>Payments are processed securely by a licensed payment processor. You'll get instant access after checkout.</p>
+    </div>
+    <div class="price-card glass" style="padding: 30px;">
+      <p style="color: var(--text-dim); margin-bottom: 18px;">Choose your checkout:</p>
+      <div style="display:flex; flex-direction:column; gap:12px; align-items:center;">
+        <!-- Placeholder — replaced with the real processor checkout link once the merchant account is approved -->
+        <a href="#" id="checkout-btn" class="btn btn-primary btn-lg" style="width: 260px;">Subscribe — $20/mo</a>
+        <p style="font-size:0.78rem; color:var(--text-dim); margin-top:8px;">Powered by <span style="color:var(--sky)">[payment processor]</span> · secure checkout · no card data touches this site</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>COEUS QUANT · H1 precious-metals signal stream · Research-backed, not financial advice.</p>
+    <p style="margin-top:6px;">© 2026 COEUS QUANT · <a href="#" style="color:var(--sky); text-decoration:none;">Terms</a> · <a href="#" style="color:var(--sky); text-decoration:none;">Risk Disclosure</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
