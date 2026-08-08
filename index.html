@@ -204,14 +204,29 @@
   <div class="wrap">
     <div class="sec-head">
       <h2>Subscribe</h2>
-      <p>Payments are processed securely by a licensed payment processor. You'll get instant access after checkout.</p>
+      <p>Pay in USDT (TRC20) — no account, no card, no signup. Send, confirm, get access within the hour.</p>
     </div>
     <div class="price-card glass" style="padding: 30px;">
-      <p style="color: var(--text-dim); margin-bottom: 18px;">Choose your checkout:</p>
       <div style="display:flex; flex-direction:column; gap:12px; align-items:center;">
-        <!-- Placeholder — replaced with the real processor checkout link once the merchant account is approved -->
-        <a href="#" id="checkout-btn" class="btn btn-primary btn-lg" style="width: 260px;">Subscribe — $20/mo</a>
-        <p style="font-size:0.78rem; color:var(--text-dim); margin-top:8px;">Powered by <span style="color:var(--sky)">[payment processor]</span> · secure checkout · no card data touches this site</p>
+        <button id="checkout-btn" class="btn btn-primary btn-lg" style="width:260px; border:none; cursor:pointer;" onclick="revealPay()">Subscribe — 20 USDT/mo</button>
+
+        <div id="pay-box" style="display:none; width:100%; max-width:430px; text-align:left; margin-top:10px; padding:20px; border:1px solid var(--line); border-radius:14px; background:var(--bg2);">
+          <p style="font-size:0.9rem; margin-bottom:12px;"><b>Send exactly 20 USDT</b> (or 60 for 3 months) via <b>TRC20</b> to:</p>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+            <code id="usdt-addr" style="flex:1; font-family:monospace; font-size:0.82rem; background:var(--bg0); border:1px solid var(--line); border-radius:8px; padding:10px 12px; word-break:break-all; color:var(--sky);">TA6LArDg6SqvPxw6EZafnd1ZTSjAw4Easv</code>
+            <button onclick="copyAddr()" style="background:var(--sky); color:#062033; border:none; border-radius:8px; padding:10px 14px; font-weight:700; cursor:pointer; font-size:0.85rem; white-space:nowrap;">Copy</button>
+            <span id="copied" style="color:var(--green); font-size:0.8rem; min-width:64px;"></span>
+          </div>
+          <p style="color:var(--amber); font-size:0.8rem; margin-bottom:12px;">⚠ TRC20 (Tron) network ONLY. Funds sent on ERC20, BEP20 or any other network are lost forever.</p>
+          <p style="color:var(--text-dim); font-size:0.85rem; line-height:1.7;">
+            1. Copy the address above &amp; send 20 USDT (TRC20).<br>
+            2. Message <a id="contact-link" href="https://t.me/yourhandle" style="color:var(--sky);">@yourhandle on Telegram</a> with the TXID.<br>
+            3. You get the private signal channel + daily H1 alerts within the hour.<br>
+            <span style="font-size:0.78rem;">Subscriptions renew monthly. Cancel anytime — no lock-in.</span>
+          </p>
+        </div>
+
+        <p style="font-size:0.78rem; color:var(--text-dim); margin-top:8px;">USDT (TRC20) · no card data on this site · no platform fees</p>
       </div>
     </div>
   </div>
@@ -225,4 +240,53 @@
 </footer>
 
 </body>
+
+<script>
+  // ── CONFIG: paste your real values here ─────────────────────────────
+  // Your USDT receive address (TRC20 / Tron network) — MetaMask wallet
+  const USDT_TRC20_ADDR = "TA6LArDg6SqvPxw6EZafnd1ZTSjAw4Easv";
+  // Your Telegram handle + profile link for payment confirmations
+  const CONTACT_TG   = "@yourhandle";
+  const CONTACT_URL  = "https://t.me/yourhandle";
+  // ────────────────────────────────────────────────────────────────────
+
+  function revealPay() {
+    const box = document.getElementById("pay-box");
+    const btn = document.getElementById("checkout-btn");
+    const shown = box.style.display !== "none";
+    box.style.display = shown ? "none" : "block";
+    btn.textContent = shown ? "Subscribe — 20 USDT/mo" : "Hide payment details";
+    if (!shown) {
+      document.getElementById("usdt-addr").textContent = USDT_TRC20_ADDR;
+      const cl = document.getElementById("contact-link");
+      cl.textContent = CONTACT_TG;
+      cl.href = CONTACT_URL;
+    }
+  }
+
+  function copyAddr() {
+    const addr = USDT_TRC20_ADDR;
+    const done = () => {
+      const el = document.getElementById("copied");
+      el.textContent = "✓ Copied";
+      setTimeout(() => { el.textContent = ""; }, 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(addr).then(done).catch(() => fallbackCopy(addr, done));
+    } else {
+      fallbackCopy(addr, done);
+    }
+  }
+
+  function fallbackCopy(text, done) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+</script>
 </html>
