@@ -220,8 +220,8 @@
           <p style="color:var(--amber); font-size:0.8rem; margin-bottom:12px;">⚠ TRC20 (Tron) network ONLY. Funds sent on ERC20, BEP20 or any other network are lost forever.</p>
           <p style="color:var(--text-dim); font-size:0.85rem; line-height:1.7;">
             1. Copy the address above &amp; send 20 USDT (TRC20).<br>
-            2. Message <a id="contact-link" href="https://t.me/yourhandle" style="color:var(--sky);">@yourhandle on Telegram</a> with the TXID.<br>
-            3. You get the private signal channel + daily H1 alerts within the hour.<br>
+            2. Once your transfer confirms on-chain, your access is activated (usually within the hour).<br>
+            3. Your access is verified by the transaction — no account needed.<br>
             <span style="font-size:0.78rem;">Subscriptions renew monthly. Cancel anytime — no lock-in.</span>
           </p>
         </div>
@@ -245,9 +245,6 @@
   // ── CONFIG: paste your real values here ─────────────────────────────
   // Your USDT receive address (TRC20 / Tron network) — MetaMask wallet
   const USDT_TRC20_ADDR = "TA6LArDg6SqvPxw6EZafnd1ZTSjAw4Easv";
-  // Your Telegram handle + profile link for payment confirmations
-  const CONTACT_TG   = "@yourhandle";
-  const CONTACT_URL  = "https://t.me/yourhandle";
   // ────────────────────────────────────────────────────────────────────
 
   function revealPay() {
@@ -258,9 +255,6 @@
     btn.textContent = shown ? "Subscribe — 20 USDT/mo" : "Hide payment details";
     if (!shown) {
       document.getElementById("usdt-addr").textContent = USDT_TRC20_ADDR;
-      const cl = document.getElementById("contact-link");
-      cl.textContent = CONTACT_TG;
-      cl.href = CONTACT_URL;
     }
   }
 
